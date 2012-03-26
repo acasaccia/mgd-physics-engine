@@ -41,7 +41,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>C:\Users\Andrea\Documents\MGD\PP\PhysicsEngine\PhysicsEngine\boost_1_49_0;C:\Users\Andrea\Documents\MGD\PP\PhysicsEngine\PhysicsEngine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\PhysicsEngine\boost_1_49_0;..\PhysicsEngine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
