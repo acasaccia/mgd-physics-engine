@@ -1,9 +1,8 @@
 /*! 
- *  Checks for collisions between the entities we can manage.
- *  When implementing a new entity we should add overloads to the Collisor::check method
- *  to check for collisions between existing entities and the new one.
+ *  Component who checks for collisions between the entities we can manage
+ *  When implementing a new entity we should add the proper overloads to Collisor::check()
  *  -
- *  Implementation of a simple Physics Engine, Physics Programming course
+ *  Implementation of a simple physics engine, Physics Programming course
  *  Master in Computer Game Developement, Verona, Italy
  *  -
  *  \author Andrea Casaccia

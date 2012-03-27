@@ -37,7 +37,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>C:\Users\Andrea\Documents\MGD\PP\PhysicsEngine\PhysicsEngine\boost_1_49_0;$(IncludePath)</IncludePath>
+    <IncludePath>Eigen;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -66,10 +66,8 @@
     <ClInclude Include="Collisor.h" />
     <ClInclude Include="EntityInterface.h" />
     <ClInclude Include="HeightMap.h" />
-    <ClInclude Include="Integrator.h" />
     <ClInclude Include="PhysicsEngine.h" />
     <ClInclude Include="Sphere.h" />
-    <ClInclude Include="Utilities.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

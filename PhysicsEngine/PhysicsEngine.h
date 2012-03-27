@@ -1,18 +1,22 @@
 /*! 
- *  Implementation of a simple Physics Engine
- *  Physics Programming course,
+ *  Main class of the engine.
+ *  Entities are added with addEntity()
+ *  Forces who act globally (e.g. gravity) are registered with addGlobalForce()
+ *  Simulation advances using update()
+ *  -
+ *  Implementation of a simple physics engine, Physics Programming course
  *  Master in Computer Game Developement, Verona, Italy
+ *  -
  *  \author Andrea Casaccia
- *  \date 23 Marzo 2012
+ *  \date 23 March 2012
  */
 
 #pragma once
 
 #include "Collisor.h"
-//#include "Integrator.h"
 #include "Sphere.h"
 #include "HeightMap.h"
-#include "Utilities.h"
+#include "Eigen\Core"
 #include <vector>
 #include <map>
 #include <string>
@@ -25,41 +29,55 @@ namespace PhysicsEngine
 	public:
 		Simulation() :
 		  entities() {};
+
+		//! Adds an entity to be managed by the engine
+		//! \param iEntity a pointer to a physical entity implementing EntityInterface
+		//! \return void
 		void addEntity( EntityInterface* const );
-		void addGlobalForce( const std::string, const Vector3 );
-		void update( const unsigned int );
+
+		//! Adds a force that acts on all entites (except those who explicitly ask to be skipped)
+		//! then updates their internal state
+		//! \param iForceName a label associated to the force for future retrieval
+		//! \param iForce the vector representing the force
+		//! \return void
+		void addGlobalForce( const std::string, const Eigen::Vector3f );
+
+		//! Applies registered global forces to entities
+		//! then updates their internal state advancing time by dt seconds
+		//! \param dt simulation step in seconds
+		//! \return void
+		void update( const float );
+
 	private:
 		std::vector<EntityInterface*> entities;
-		std::map<std::string,Vector3> globalForces;
+		std::map<std::string,Eigen::Vector3f> globalForces;
 	};
 
-	//! Adds a 
-	//! then updates their internal state
-	//! \param iForceName a label associated to the force for future retrieval
-	//! \param iForce the vector representing the force
-	//! \return void
-	void Simulation::addGlobalForce( const std::string iForceName, const Vector3 iForce )
+	void Simulation::addGlobalForce( const std::string iForceName, const Eigen::Vector3f iForce )
 	{
 		globalForces[ iForceName ] = iForce;
 	}
 
-	//! Adds an entity to be managed
-	//! \param iEntity a pointer to a physical entity implementing EntityInterface
-	//! \return void
 	void Simulation::addEntity( EntityInterface* const iEntity )
 	{
 		entities.push_back( iEntity );
 	}
 
-	//! Applies registered global forces to all entities
-	//! then updates their internal state
-	//! \param dt simulation step in milliseconds
-	//! \return void
-	void Simulation::update( const unsigned int dt )
+	void Simulation::update( const float dt )
 	{
+		std::map<std::string,Eigen::Vector3f>::iterator it;
+		for (it = globalForces.begin(); it != globalForces.end(); ++it)
+		{
+			Eigen::Vector3f force = it->second;
+			for(unsigned int i=0; i<entities.size(); ++i)
+			{
+				entities[i]->applyForce( force );
+			}
+		}
+
 		for(unsigned int i=0; i<entities.size(); ++i)
 		{
-			entities[i]->update();
+			entities[i]->update( dt );
 		}
 	}
 
