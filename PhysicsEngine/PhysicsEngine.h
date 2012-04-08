@@ -1,8 +1,5 @@
 /*! 
  *  Main class of the engine.
- *  Entities are added with addEntity()
- *  Forces who act globally (e.g. gravity) are registered with addGlobalForce()
- *  Simulation advances using update()
  *  -
  *  Implementation of a simple physics engine, Physics Programming course
  *  Master in Computer Game Developement, Verona, Italy
@@ -13,72 +10,78 @@
 
 #pragma once
 
-#include "Collisor.h"
+#include "LinearAlgebra.h"
+#include "RigidBody.h"
 #include "Sphere.h"
 #include "HeightMap.h"
-#include "Eigen\Core"
-#include <vector>
+#include "Collisor.h"
 #include <map>
 #include <string>
 
 namespace PhysicsEngine
 {
-
 	class Simulation
 	{
 	public:
 		Simulation() :
-		  entities() {};
+		  mRigidBodies(),
+		  mGlobalForces()
+		  {};
 
-		//! Adds an entity to be managed by the engine
-		//! \param iEntity a pointer to a physical entity implementing EntityInterface
+		//! Adds a rigid body to be managed by the engine
+		//! \param iBodyName a label associated to the body for future retrieval
+		//! \param iBody a pointer to rigid body
 		//! \return void
-		void addEntity( EntityInterface* const );
+		void addRigidBody( const std::string, RigidBody* const );
 
-		//! Adds a force that acts on all entites (except those who explicitly ask to be skipped)
-		//! then updates their internal state
+		//! Adds a force that acts on all rigid bodies
 		//! \param iForceName a label associated to the force for future retrieval
 		//! \param iForce the vector representing the force
 		//! \return void
-		void addGlobalForce( const std::string, const Eigen::Vector3f );
+		void addGlobalForce( const std::string, const vector3 );
 
-		//! Applies registered global forces to entities
+		//! Applies registered global forces to rigid bodies
 		//! then updates their internal state advancing time by dt seconds
-		//! \param dt simulation step in seconds
+		//! \param iDt simulation step in seconds
 		//! \return void
-		void update( const float );
+		void update( const real );
 
 	private:
-		std::vector<EntityInterface*> entities;
-		std::map<std::string,Eigen::Vector3f> globalForces;
+		std::map<std::string, RigidBody*> mRigidBodies;
+		std::map<std::string, vector3> mGlobalForces;
 	};
 
-	void Simulation::addGlobalForce( const std::string iForceName, const Eigen::Vector3f iForce )
+	void Simulation::addGlobalForce( const std::string iForceName, const vector3 iForce )
 	{
-		globalForces[ iForceName ] = iForce;
+		mGlobalForces[ iForceName ] = iForce;
 	}
 
-	void Simulation::addEntity( EntityInterface* const iEntity )
+	void Simulation::addRigidBody( const std::string iRigidBodyName, RigidBody* const iRigidBody )
 	{
-		entities.push_back( iEntity );
+		mRigidBodies[ iRigidBodyName ] = iRigidBody;
 	}
 
-	void Simulation::update( const float dt )
+	void Simulation::update( const real iDt )
 	{
-		std::map<std::string,Eigen::Vector3f>::iterator it;
-		for (it = globalForces.begin(); it != globalForces.end(); ++it)
-		{
-			Eigen::Vector3f force = it->second;
-			for(unsigned int i=0; i<entities.size(); ++i)
-			{
-				entities[i]->applyForce( force );
-			}
-		}
+		std::map<std::string,RigidBody*>::iterator bodiesIt;
 
-		for(unsigned int i=0; i<entities.size(); ++i)
-		{
-			entities[i]->update( dt );
-		}
+		// Check collisions between all registered entities
+		//std::map<std::string,RigidBody*>::iterator bodiesIt_2;
+		//for (bodiesIt = rigidBodies.begin(); bodiesIt != rigidBodies.end(); ++bodiesIt)
+		//	for (bodiesIt_2 = rigidBodies.begin(); bodiesIt_2 != rigidBodies.end(); ++bodiesIt_2)
+		//		if (bodiesIt != bodiesIt_2)
+		//			Collisor::check(bodiesIt->second, bodiesIt_2->second);
+
+		// Apply global forces
+		std::map<std::string,vector3>::iterator forcesIt;
+
+		for (forcesIt = mGlobalForces.begin(); forcesIt != mGlobalForces.end(); ++forcesIt)
+			for (bodiesIt = mRigidBodies.begin(); bodiesIt != mRigidBodies.end(); ++bodiesIt)
+				bodiesIt->second->applyForce(forcesIt->second);
+
+		// Update all bodies
+		for (bodiesIt = mRigidBodies.begin(); bodiesIt != mRigidBodies.end(); ++bodiesIt)
+			bodiesIt->second->update(iDt);
 	}
 
 }

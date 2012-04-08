@@ -10,13 +10,13 @@
 
 #pragma once
 
-#include "EntityInterface.h"
-#include "Eigen\Core"
+#include "LinearAlgebra.h"
+#include "RigidBody.h"
 
 namespace PhysicsEngine
 {
 
-	class HeightMap : public EntityInterface
+	class HeightMap : public RigidBody
 	{
 	public:
 		//! Creates a new HeightMap

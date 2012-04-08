@@ -11,8 +11,10 @@
 
 #pragma once
 
+#include "LinearAlgebra.h"
 #include "Sphere.h"
 #include "HeightMap.h"
+#include "Collision.h"
 
 namespace PhysicsEngine
 {
@@ -23,19 +25,39 @@ namespace PhysicsEngine
 		//! Checks collision between two spheres
 		//! \param iSphere_1 first sphere object
 		//! \param iSphere_2 the other sphere
-		//! \return 
-		float Collisor::check( const Sphere& iSphere_1, const Sphere& iSphere_2 )
+		//! \return Collision
+		static Collision Collisor::check( const RigidBody* iRigidBody_1, const RigidBody* iRigidBody_2 )
 		{
-			return 0.0f;
+			// \todo: forward this to the right method of Collisor
+			//Sphere* s1; Sphere* s2;
+			//s1 = dynamic_cast<const Sphere*>(*iRigidBody_1);
+			//s2 = dynamic_cast<const Sphere*>(*iRigidBody_2);
+
+			//if ( s1 && s2 )
+			//	return Collisor::check( s1, s2 );
+
+			Collision* collision = new Collision();
+			return *collision;
+		}
+
+		//! Checks collision between two spheres
+		//! \param iSphere_1 first sphere object
+		//! \param iSphere_2 the other sphere
+		//! \return Collision
+		static Collision Collisor::check( const Sphere& iSphere_1, const Sphere& iSphere_2 )
+		{
+			Collision* collision = new Collision();
+			return *collision;
 		}
 
 		//! Checks collision between a sphere and an heightmap
 		//! \param iSphere reference to Sphere object
 		//! \param iHeightMap reference to HeightMap object
-		//! \return float 
-		float Collisor::check( const Sphere& iSphere, const HeightMap& iHeightMap )
+		//! \return Collision 
+		static Collision Collisor::check( const Sphere& iSphere, const HeightMap& iHeightMap )
 		{
-			return 0.0f;
+			Collision* collision = new Collision();
+			return *collision;
 		}
 
 	};

@@ -27,7 +27,13 @@
     <ClInclude Include="Collisor.h">
       <Filter>File di intestazione</Filter>
     </ClInclude>
-    <ClInclude Include="EntityInterface.h">
+    <ClInclude Include="RigidBody.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
+    <ClInclude Include="LinearAlgebra.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
+    <ClInclude Include="Collision.h">
       <Filter>File di intestazione</Filter>
     </ClInclude>
   </ItemGroup>
