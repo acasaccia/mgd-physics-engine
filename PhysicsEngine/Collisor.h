@@ -16,7 +16,7 @@
 #include "Terrain.h"
 #include "Collision.h"
 #include <string>
-#include <vector>
+#include <map>
 
 namespace PhysicsEngine
 {
@@ -26,7 +26,8 @@ namespace PhysicsEngine
 	public:
 
 		//! Through the routing table we instruct the collisor on how to handle each kind of collision check
-		std::vector<std::vector<void (*)(RigidBody*, RigidBody*)>> mRoutingTable;
+		typedef std::map<int, std::map<int, void (*)(RigidBody*, RigidBody*)>> functionPointersTable;
+		functionPointersTable mRoutingTable;
 
 		//! Constructor initializes the routing table
 		Collisor::Collisor()
