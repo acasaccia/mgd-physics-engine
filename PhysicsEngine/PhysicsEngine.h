@@ -28,8 +28,11 @@ namespace PhysicsEngine
 	{
 	public:
 
-		// http://eigen.tuxfamily.org/dox-devel/TopicStructHavingEigenMembers.html
-		EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+		stringToRigidBodyMap mRigidBodies;
+		stringToForceMap mGlobalForces;
+		Collisor* mCollisor;
+
+		Simulation();
 
 		//! Adds a rigid body to be managed by the engine
 		//! \param iBodyName a label associated to the body for future retrieval
@@ -49,8 +52,9 @@ namespace PhysicsEngine
 		//! \return void
 		void update( const float );
 
-		stringToRigidBodyMap mRigidBodies;
-		stringToForceMap mGlobalForces;
+		// http://eigen.tuxfamily.org/dox-devel/TopicStructHavingEigenMembers.html
+		EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+
 	};
 
 }

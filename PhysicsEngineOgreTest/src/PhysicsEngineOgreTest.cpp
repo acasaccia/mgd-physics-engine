@@ -31,7 +31,7 @@ PhysicsEngineOgreTest::~PhysicsEngineOgreTest(void)
 //-------------------------------------------------------------------------------------
 void PhysicsEngineOgreTest::createScene(void)
 {
-	simulation = new PhysicsEngine::Simulation;
+	simulation = new PhysicsEngine::Simulation();
 	simulation->addGlobalForce("gravity", new vector3(0.0f, -9.8f, 0.0f));
 
 	float sphereRadius = 25.0f;
