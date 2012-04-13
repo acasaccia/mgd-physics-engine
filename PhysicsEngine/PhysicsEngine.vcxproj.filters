@@ -13,21 +13,18 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="File di intestazione\RigidBodies">
+      <UniqueIdentifier>{751a6830-d715-40bb-851d-e73481de8a58}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="File di origine\RigidBodies">
+      <UniqueIdentifier>{ffb3130c-7b40-4dc5-b476-a3b48d062f59}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Sphere.h">
-      <Filter>File di intestazione</Filter>
-    </ClInclude>
-    <ClInclude Include="HeightMap.h">
-      <Filter>File di intestazione</Filter>
-    </ClInclude>
     <ClInclude Include="PhysicsEngine.h">
       <Filter>File di intestazione</Filter>
     </ClInclude>
     <ClInclude Include="Collisor.h">
-      <Filter>File di intestazione</Filter>
-    </ClInclude>
-    <ClInclude Include="RigidBody.h">
       <Filter>File di intestazione</Filter>
     </ClInclude>
     <ClInclude Include="LinearAlgebra.h">
@@ -36,5 +33,31 @@
     <ClInclude Include="Collision.h">
       <Filter>File di intestazione</Filter>
     </ClInclude>
+    <ClInclude Include="Sphere.h">
+      <Filter>File di intestazione\RigidBodies</Filter>
+    </ClInclude>
+    <ClInclude Include="Constants.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
+    <ClInclude Include="Terrain.h">
+      <Filter>File di intestazione\RigidBodies</Filter>
+    </ClInclude>
+    <ClInclude Include="RigidBody.h">
+      <Filter>File di intestazione\RigidBodies</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="PhysicsEngine.cpp">
+      <Filter>File di origine</Filter>
+    </ClCompile>
+    <ClCompile Include="RigidBody.cpp">
+      <Filter>File di origine\RigidBodies</Filter>
+    </ClCompile>
+    <ClCompile Include="Terrain.cpp">
+      <Filter>File di origine\RigidBodies</Filter>
+    </ClCompile>
+    <ClCompile Include="Sphere.cpp">
+      <Filter>File di origine\RigidBodies</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

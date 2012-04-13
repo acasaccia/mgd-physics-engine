@@ -13,15 +13,17 @@
 
 #include "Eigen\Core"
 #include "Eigen\Geometry"
+#include "Eigen\StdVector"
 #include <cfloat>
 #include <cmath>
 
 #if 1
+
     /*!
      * Defines we're in single precision mode, for any code
      * that needs to be conditionally compiled.
      */
-    #define SINGLE_PRECISION
+    #define PHYSICS_ENGINE_SINGLE_PRECISION
 
     /*!
      * Defines a real number precision. PhxEngine can be compiled in
@@ -57,10 +59,11 @@
 	typedef Eigen::Quaternionf quaternion;
 	typedef Eigen::Matrix4f matrix4;
 	typedef Eigen::Matrix3f matrix3;
+	typedef Eigen::MatrixXf matrixN;
 
 #else
 
-    #define DOUBLE_PRECISION
+    #define PHYSICS_ENGINE_DOUBLE_PRECISION
 
     typedef double real;
 
@@ -78,5 +81,6 @@
 	typedef Eigen::Quaterniond quaternion;
 	typedef Eigen::Matrix4d matrix4;
 	typedef Eigen::Matrix3d matrix3;
+	typedef Eigen::MatrixXd matrixN;
 
 #endif

@@ -1,5 +1,5 @@
 /*! 
- *  Component who checks for collisions between the entities we can manage
+ *  Component that checks for collisions between the entities we manage
  *  When implementing a new entity we should add the proper overloads to Collisor::check()
  *  -
  *  Implementation of a simple physics engine, Physics Programming course
@@ -13,7 +13,7 @@
 
 #include "LinearAlgebra.h"
 #include "Sphere.h"
-#include "HeightMap.h"
+#include "Terrain.h"
 #include "Collision.h"
 
 namespace PhysicsEngine
@@ -29,13 +29,8 @@ namespace PhysicsEngine
 		static Collision Collisor::check( const RigidBody* iRigidBody_1, const RigidBody* iRigidBody_2 )
 		{
 			// \todo: forward this to the right method of Collisor
-			//Sphere* s1; Sphere* s2;
-			//s1 = dynamic_cast<const Sphere*>(*iRigidBody_1);
-			//s2 = dynamic_cast<const Sphere*>(*iRigidBody_2);
-
-			//if ( s1 && s2 )
-			//	return Collisor::check( s1, s2 );
-
+			// function = mFunctorTable[ iRigidBody_1->mType ][ iRigidBody_2->mType ]
+			// return function( const RigidBody* iRigidBody_1, const RigidBody* iRigidBody_2 );
 			Collision* collision = new Collision();
 			return *collision;
 		}
@@ -52,13 +47,15 @@ namespace PhysicsEngine
 
 		//! Checks collision between a sphere and an heightmap
 		//! \param iSphere reference to Sphere object
-		//! \param iHeightMap reference to HeightMap object
+		//! \param iTerrain reference to Terrain object
 		//! \return Collision 
-		static Collision Collisor::check( const Sphere& iSphere, const HeightMap& iHeightMap )
+		static Collision Collisor::check( const Sphere& iSphere, const Terrain& iTerrain )
 		{
 			Collision* collision = new Collision();
 			return *collision;
 		}
+
+		void (*foo)();
 
 	};
 

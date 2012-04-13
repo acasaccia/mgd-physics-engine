@@ -15,7 +15,7 @@ int main()
 {
 	PhysicsEngine::Simulation* simulation = new PhysicsEngine::Simulation;
 	
-	vector3 gravity( 0.0f, -9.8f, 0.0f );
+	vector3* gravity = new vector3( 0.0f, -9.8f, 0.0f );
 	simulation->addGlobalForce("gravity", gravity);
 
 	PhysicsEngine::RigidBody* sphere = new PhysicsEngine::Sphere(1.0f);

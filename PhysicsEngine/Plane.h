@@ -16,13 +16,18 @@
 namespace PhysicsEngine
 {
 
-	class Sphere : public RigidBody
+	class Plane : public RigidBody
 	{
 	public:
-		Sphere( const real iRadius );
-		int getType();
+		Plane( const vector3 iNormal, const real iDistance ) :
+		  RigidBody(),
+		  normal( iNormal ),
+		  distance( iDistance )
+		{}
+
 	private:
-		real radius;
+		vector3 normal;
+		real distance;
 	};
 
 }
