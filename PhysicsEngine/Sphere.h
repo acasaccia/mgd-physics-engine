@@ -21,8 +21,7 @@ namespace PhysicsEngine
 	public:
 		Sphere( const real iRadius );
 		int getType();
-	private:
-		real radius;
+		real mRadius;
 	};
 
 }

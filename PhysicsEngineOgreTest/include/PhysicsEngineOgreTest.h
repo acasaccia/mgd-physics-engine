@@ -35,7 +35,7 @@ public:
 
 protected:
     virtual void createScene(void);
-	PhysicsEngine::Simulation* simulation;
+	PhysicsEngine::Simulation* mSimulation;
 };
 
 class CustomFrameListener : public Ogre::FrameListener

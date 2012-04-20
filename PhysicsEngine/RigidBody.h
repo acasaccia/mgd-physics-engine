@@ -19,17 +19,15 @@ namespace PhysicsEngine
 	{
 	public:
 
-		//! http://eigen.tuxfamily.org/dox-devel/TopicStructHavingEigenMembers.html
-		EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+		real mResistanceToDeformation;
+		real mElasticity;
+		//real M=0.5;
 
 		vector3 mLinearMomentum;
 		vector3 mAngularMomentum;
 
 		real mInverseMass;
-		real mRestitutionCoefficient;
 		matrix3 mInverseInertiaTensor;
-		real mLinearDamping;
-		real mAngularDamping;
 
 		vector3 mPosition;
 		quaternion mOrientation;
@@ -45,10 +43,9 @@ namespace PhysicsEngine
 			mLinearMomentum(0,0,0),
 			mAngularMomentum(0,0,0),
 			mInverseMass(50.0f),
-			mRestitutionCoefficient(0.75f),
+			mResistanceToDeformation(10),
+			mElasticity(0.1f),
 			mInverseInertiaTensor(matrix3::Identity()),
-			mLinearDamping(0),
-			mAngularDamping(0),
 			mPosition(0,0,0),
 			mOrientation(1,0,0,0),
 			mVelocity(0,0,0),
@@ -80,6 +77,9 @@ namespace PhysicsEngine
 
 		//! Resets torques applied to the entity
 		void resetNetTorque();
+
+		//! http://eigen.tuxfamily.org/dox-devel/TopicStructHavingEigenMembers.html
+		EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
 	};
 

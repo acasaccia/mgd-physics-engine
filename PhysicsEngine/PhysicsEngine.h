@@ -30,9 +30,10 @@ namespace PhysicsEngine
 
 		stringToRigidBodyMap mRigidBodies;
 		stringToForceMap mGlobalForces;
-		Collisor* mCollisor;
+		Collisor mCollisor;
 
 		Simulation();
+		Simulation::~Simulation();
 
 		//! Adds a rigid body to be managed by the engine
 		//! \param iBodyName a label associated to the body for future retrieval

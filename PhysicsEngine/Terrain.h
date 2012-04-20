@@ -20,7 +20,9 @@ namespace PhysicsEngine
 	{
 	public:
 		matrixN mVertexes;
-		float cellSize;
+		real mCellSize;
+		real mMaxHeight;
+		int mCellsNumber;
 
 		//! Creates a new HeightMap
 		//! \param iSize number of cells for this square heightMap

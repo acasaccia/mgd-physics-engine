@@ -10,7 +10,7 @@ namespace PhysicsEngine
 
 	Sphere::Sphere( const real iRadius ) :
 		RigidBody(),
-		radius( iRadius )
+		mRadius( iRadius )
 	{}
 
 	int Sphere::getType()

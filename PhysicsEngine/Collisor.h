@@ -17,6 +17,8 @@
 #include "Collision.h"
 #include <string>
 #include <map>
+#include <iostream>
+#include <cmath>
 
 namespace PhysicsEngine
 {
@@ -25,7 +27,7 @@ namespace PhysicsEngine
 	{
 	public:
 
-		//! Through the routing table we instruct the collisor on how to handle each kind of collision check
+		//! Through the routing table we instruct the collisor on how to handle each kind of collision
 		typedef std::map<int, std::map<int, void (*)(RigidBody*, RigidBody*)>> functionPointersTable;
 		functionPointersTable mRoutingTable;
 
@@ -37,10 +39,9 @@ namespace PhysicsEngine
 			mRoutingTable [RIGID_BODY_TYPE_SPHERE]	[RIGID_BODY_TYPE_SPHERE]	= &Collisor::checkSphereWithSphere;
 		}
 
-		//! Checks collision between two spheres
-		//! \param iSphere_1 first sphere object
-		//! \param iSphere_2 the other sphere
-		//! \return Collision
+		//! Checks collision between generic rigid bodies
+		//! \param iRigidBody_1 first sphere object
+		//! \param iRigidBody_2 the other object
 		void Collisor::check( RigidBody* iRigidBody_1, RigidBody* iRigidBody_2 )
 		{
 			void (*functionToCall)(RigidBody*, RigidBody*) = mRoutingTable [ iRigidBody_1->getType() ] [ iRigidBody_2->getType() ];
@@ -55,6 +56,34 @@ namespace PhysicsEngine
 		{
 			Sphere *sphere = dynamic_cast<Sphere *>(iRigidBody_1);
 			Terrain *terrain = dynamic_cast<Terrain *>(iRigidBody_2);
+
+			// find which triangles could be colliding with sphere
+			// ASSUMPTION: sphere radius < terrain triangle cathetus
+			//std::vector<Triangle *> getPotentialCollidingTriangles(sphere->mPosition.x(), sphere->mPosition.z());
+
+			//for(triangle in potentialcollisors)			
+			//	if triangleCollides()
+			//		Collisor::resolveCollision( collision, iRigidBody_1, iRigidBody_2 );
+
+			real halfTerrainSize = terrain->mVertexes.rows() * terrain->mCellSize / 2;
+
+			int x = (int) floor( (sphere->mPosition.x() + halfTerrainSize) / terrain->mCellSize );
+			int z = (int) floor( (sphere->mPosition.z() + halfTerrainSize) / terrain->mCellSize );
+
+			real height = terrain->mVertexes(x,z);
+
+			if ( sphere->mPosition.y() - sphere->mRadius < height )
+			{
+				
+				Collision collision;
+				collision.mContactPoint = vector3(sphere->mPosition.x(), height, sphere->mPosition.z());;
+				collision.mContactNormal = vector3(0,1,0);
+				collision.mPenetration = height - ( sphere->mPosition.y() - sphere->mRadius );
+				// ASSUMPTION: terrain has infinite mass
+				// we compute forces for the sphere only
+				Collisor::resolveCollision( collision, iRigidBody_1, iRigidBody_2 );
+			}
+
 		}
 
 		//! Checks collision between a sphere and an heightmap
@@ -70,6 +99,55 @@ namespace PhysicsEngine
 		{
 			Sphere *sphere_1 = dynamic_cast<Sphere *>(iRigidBody_1);
 			Sphere *sphere_2 = dynamic_cast<Sphere *>(iRigidBody_2);
+
+			// distance between spheres centre
+			vector3 distanceVector = sphere_1->mPosition - sphere_2->mPosition;
+			real distance = (distanceVector).norm();
+			vector3 distanceDirection = distanceVector / distance;
+			real penetration = sphere_1->mRadius + sphere_2->mRadius - distance;
+			if ( penetration > 0 )
+			{
+				Collision collision = Collision (distanceVector, distanceDirection, penetration);
+				Collisor::resolveCollision( collision, iRigidBody_1, iRigidBody_2 );
+
+				distanceVector*=-1;
+				distanceDirection*=-1;
+				collision = Collision (distanceVector, distanceDirection, penetration);
+				Collisor::resolveCollision( collision, iRigidBody_2, iRigidBody_1 );
+			}
+		}
+
+		static void Collisor::resolveCollision( Collision& iCollision, RigidBody* iRigidBody_1, RigidBody* iRigidBody_2 )
+		{
+			vector3 force = Collisor::computeForce(iCollision, iRigidBody_1, iRigidBody_2);
+			iRigidBody_1->applyForceAtPoint(force, iCollision.mContactPoint);
+		}
+
+		static vector3 Collisor::computeForce( Collision& iCollision, RigidBody* iRigidBody_1, RigidBody* iRigidBody_2 )
+		{
+			vector3 force(0,0,0);
+			vector3 relativeVelocity = iRigidBody_1->mVelocity - iRigidBody_2->mVelocity;
+
+			//real f = relativeVelocity.dot( iCollision.mContactNormal );
+			//vector3 vTang = iCollision.mContactNormal * f;
+			//vTang = vrel_1_2 - vTang;
+			//f = K*d - L*f;
+
+			real f = iRigidBody_1->mResistanceToDeformation * iCollision.mPenetration
+			         - iRigidBody_1->mElasticity * relativeVelocity.dot( iCollision.mContactNormal );
+
+			if (f < 0)
+				f = 0;
+			
+			force = iCollision.mContactNormal * f;
+
+			//f *= M;
+			//real ModVtang = vTang.norm();
+			//vTang *= -f;
+			//if(ModVtang < 9.8f * 0.02 ) vTang /= 9.8f * 0.02;
+			//else vTang /= ModVtang;
+			//Fout += vTang;
+			return force;
 		}
 
 	};

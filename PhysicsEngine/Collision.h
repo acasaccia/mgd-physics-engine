@@ -14,8 +14,11 @@
 
 namespace PhysicsEngine
 {
-	class Collision
+	struct Collision
 	{
+		Collision();
+		Collision( vector3& iContactPoint, vector3& iContactNormal, real iPenetration);
+
 		//! Position of the contact in world coordinates.
 		vector3 mContactPoint;
 
@@ -27,4 +30,5 @@ namespace PhysicsEngine
 		//! between the inter-penetrating points.
 		real mPenetration;
 	};
+
 }
