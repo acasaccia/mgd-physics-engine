@@ -1,5 +1,5 @@
 /*! 
- *  
+ *  Represents a collision between two rigid bodies
  *  -
  *  Implementation of a simple physics engine, Physics Programming course
  *  Master in Computer Game Developement, Verona, Italy

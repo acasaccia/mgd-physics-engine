@@ -55,6 +55,7 @@ void PhysicsEngineOgreTest::createScene(void)
 
 		// Bind an Ogre Entity *with the same name* as physical entity to have its position
 		// updated on each frame (see CustomFrameListener::frameStarted)
+		// not so robust but for this example will do :)
 		Ogre::Entity* sphereEntity = mSceneMgr->createEntity(oss.str(), "sphere.mesh");
 
 		mSphereNode = mSceneMgr->getRootSceneNode()->createChildSceneNode();
@@ -78,7 +79,6 @@ void PhysicsEngineOgreTest::createScene(void)
 	
 	createOgreTerrain(mSceneMgr, mSceneMgr->getRootSceneNode()->createChildSceneNode(), terrain);
 	
-
     // Set ambient light
     mSceneMgr->setAmbientLight(Ogre::ColourValue(0.2, 0.2, 0.2));
 

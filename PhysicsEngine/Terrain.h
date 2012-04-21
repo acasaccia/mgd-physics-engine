@@ -16,6 +16,13 @@
 namespace PhysicsEngine
 {
 
+	struct Triangle
+	{
+		real vertexes[3];
+		Triangle();
+		Triangle( real, real, real );
+	};
+
 	class Terrain : public RigidBody
 	{
 	public:
@@ -29,7 +36,17 @@ namespace PhysicsEngine
 		//! \param iSquareSize dimension of a square of the matrix in the simulation world
 		//! \return void
 		Terrain( const int, const real, const real );
+
+		//! Specifies this class type to implement polymorphic behaviour in Collisor
+		//! \return int
 		int getType();
+
+		//! Returns a pair: first element is the number of neighbour triangles (could vary on edges)
+		//! second element is an array of pointer to triangles
+		//! \param r row number in the heightmap matrix
+		//! \param c column number in the heightmap matrix
+		//! \return std::pair<int,Triangle*>
+		std::pair<int,Triangle*> getNeighbourTriangles( const int, const int );
 	};
 
 }

@@ -19,6 +19,7 @@
 #include <map>
 #include <iostream>
 #include <cmath>
+#include <utility>
 
 namespace PhysicsEngine
 {
@@ -56,29 +57,41 @@ namespace PhysicsEngine
 		{
 			Sphere *sphere = dynamic_cast<Sphere *>(iRigidBody_1);
 			Terrain *terrain = dynamic_cast<Terrain *>(iRigidBody_2);
+			Collision collision;
+
+			// project center of the sphere on terrain to
+			// find which square sphere is over at the moment
+			// pivot vertex is the vertex by which we identify
+			// a cell on the heightmap
 
 			// find which triangles could be colliding with sphere
-			// ASSUMPTION: sphere radius < terrain triangle cathetus
-			//std::vector<Triangle *> getPotentialCollidingTriangles(sphere->mPosition.x(), sphere->mPosition.z());
-
-			//for(triangle in potentialcollisors)			
-			//	if triangleCollides()
-			//		Collisor::resolveCollision( collision, iRigidBody_1, iRigidBody_2 );
-
+			// ASSUMPTION: sphere radius < terrain triangle cathetus:
+			// we check at most 18 neighbour triangles
+			//  _ _ _ 
+			// |_|_|_|
+			// |_|X|_|
+			// |_|_|_|
+			//
 			real halfTerrainSize = terrain->mVertexes.rows() * terrain->mCellSize / 2;
-
 			int x = (int) floor( (sphere->mPosition.x() + halfTerrainSize) / terrain->mCellSize );
 			int z = (int) floor( (sphere->mPosition.z() + halfTerrainSize) / terrain->mCellSize );
 
-			real height = terrain->mVertexes(x,z);
+			// first member of the pair is the number of triangles we actually found
+			std::pair<int,Triangle*> trianglesToCheck = terrain->getNeighbourTriangles(x, z);
 
+			for(int c=0; c<trianglesToCheck.first; c++)
+				if ( Collisor::checkTriangleWithSphere(trianglesToCheck.second[c], sphere) )
+					// ASSUMPTION: terrain has infinite mass
+					// we compute forces for the sphere only
+					Collisor::resolveCollision( collision, iRigidBody_1, iRigidBody_2 );
+
+			// Simplified version: treats terrain as a stack of voxels
+			real height = terrain->mVertexes(x,z);
 			if ( sphere->mPosition.y() - sphere->mRadius < height )
 			{
-				
-				Collision collision;
 				collision.mContactPoint = vector3(sphere->mPosition.x(), height, sphere->mPosition.z());;
 				collision.mContactNormal = vector3(0,1,0);
-				collision.mPenetration = height - ( sphere->mPosition.y() - sphere->mRadius );
+				collision.mPenetration = height - (sphere->mPosition.y() - sphere->mRadius);
 				// ASSUMPTION: terrain has infinite mass
 				// we compute forces for the sphere only
 				Collisor::resolveCollision( collision, iRigidBody_1, iRigidBody_2 );
@@ -148,6 +161,11 @@ namespace PhysicsEngine
 			//else vTang /= ModVtang;
 			//Fout += vTang;
 			return force;
+		}
+
+		static bool Collisor::checkTriangleWithSphere( const Triangle& iTriangle, const Sphere* iSphere )
+		{
+			
 		}
 
 	};
