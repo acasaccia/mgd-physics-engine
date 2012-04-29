@@ -3,7 +3,6 @@
 
 #include "LinearAlgebra.h"
 #include "Sphere.h"
-#include "Constants.h"
 
 namespace PhysicsEngine
 {

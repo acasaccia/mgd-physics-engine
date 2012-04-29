@@ -1,5 +1,5 @@
 /*! 
- *  A physical sphere with a radius, a mass, a position and a linear momentum
+ *  Represents a plane (well, strictly speaking this is an half-space...)
  *  -
  *  Implementation of a simple physics engine, Physics Programming course
  *  Master in Computer Game Developement, Verona, Italy

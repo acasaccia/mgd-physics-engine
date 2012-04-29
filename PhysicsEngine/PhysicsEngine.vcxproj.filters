@@ -36,13 +36,13 @@
     <ClInclude Include="Sphere.h">
       <Filter>File di intestazione\RigidBodies</Filter>
     </ClInclude>
-    <ClInclude Include="Constants.h">
-      <Filter>File di intestazione</Filter>
-    </ClInclude>
     <ClInclude Include="Terrain.h">
       <Filter>File di intestazione\RigidBodies</Filter>
     </ClInclude>
     <ClInclude Include="RigidBody.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
+    <ClInclude Include="Triangle.h">
       <Filter>File di intestazione</Filter>
     </ClInclude>
   </ItemGroup>
@@ -60,6 +60,9 @@
       <Filter>File di origine</Filter>
     </ClCompile>
     <ClCompile Include="RigidBody.cpp">
+      <Filter>File di origine</Filter>
+    </ClCompile>
+    <ClCompile Include="Triangle.cpp">
       <Filter>File di origine</Filter>
     </ClCompile>
   </ItemGroup>

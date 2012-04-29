@@ -20,14 +20,14 @@ namespace PhysicsEngine
 	{
 	public:
 		//! Creates a new sphere
-		//! \param iSize number of cells for this square heightMap
-		//! \param iSquareSize dimension of a square of the matrix in the simulation world
+		//! \param iRadius radius of the sphere for collision detection
 		//! \return void
 		Sphere( const real iRadius );
 		
 		//! Specifies this class type to implement polymorphic behaviour in Collisor
-		//! \return int
+		//! \return int one of the types listed in RigidBody.h
 		int getType();
+
 		real mRadius;
 	};
 

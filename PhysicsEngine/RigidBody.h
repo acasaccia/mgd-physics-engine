@@ -1,5 +1,5 @@
 /*! 
- *  
+ *  Rigid body is the base class for all physics entities of the engine
  *  -
  *  Implementation of a simple physics engine, Physics Programming course
  *  Master in Computer Game Developement, Verona, Italy
@@ -11,17 +11,21 @@
 #pragma once
 
 #include "LinearAlgebra.h"
-#include "Constants.h"
 
 namespace PhysicsEngine
 {
+	// Concrete rigid bodies are listed here
+	// These are the return values of each concrete type getType() method
+	#define RIGID_BODY_TYPE_SPHERE 0
+	#define RIGID_BODY_TYPE_TERRAIN 1
+
 	class RigidBody
 	{
 	public:
 
 		real mResistanceToDeformation;
 		real mElasticity;
-		//real M=0.5;
+		real mFriction;
 
 		vector3 mLinearMomentum;
 		vector3 mAngularMomentum;
@@ -42,9 +46,10 @@ namespace PhysicsEngine
 		RigidBody() :
 			mLinearMomentum(0,0,0),
 			mAngularMomentum(0,0,0),
-			mInverseMass(50.0f),
-			mResistanceToDeformation(10),
-			mElasticity(0.1f),
+			mInverseMass(1.0f),
+			mResistanceToDeformation(1000),
+			mElasticity(2.0f),
+			mFriction(20.0),
 			mInverseInertiaTensor(matrix3::Identity()),
 			mPosition(0,0,0),
 			mOrientation(1,0,0,0),

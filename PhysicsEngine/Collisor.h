@@ -1,6 +1,7 @@
 /*! 
  *  Component that checks for collisions between the entities we manage
  *  When implementing a new entity we should add the proper functions
+ *  and update the routing table
  *  -
  *  Implementation of a simple physics engine, Physics Programming course
  *  Master in Computer Game Developement, Verona, Italy
@@ -28,7 +29,7 @@ namespace PhysicsEngine
 	{
 	public:
 
-		//! Through the routing table we instruct the collisor on how to handle each kind of collision
+		//! Through the routing table we instruct the collisor on how to handle each couple of rigid bodies
 		typedef std::map<int, std::map<int, void (*)(RigidBody*, RigidBody*)>> functionPointersTable;
 		functionPointersTable mRoutingTable;
 
@@ -61,8 +62,6 @@ namespace PhysicsEngine
 
 			// project center of the sphere on terrain to
 			// find which square sphere is over at the moment
-			// pivot vertex is the vertex by which we identify
-			// a cell on the heightmap
 
 			// find which triangles could be colliding with sphere
 			// ASSUMPTION: sphere radius < terrain triangle cathetus:
@@ -72,20 +71,36 @@ namespace PhysicsEngine
 			// |_|X|_|
 			// |_|_|_|
 			//
-			real halfTerrainSize = terrain->mVertexes.rows() * terrain->mCellSize / 2;
-			int x = (int) floor( (sphere->mPosition.x() + halfTerrainSize) / terrain->mCellSize );
-			int z = (int) floor( (sphere->mPosition.z() + halfTerrainSize) / terrain->mCellSize );
+			real halfFieldsize = terrain->mFieldSize / 2;
+			
+			int x = (int) floor( ( sphere->mPosition.x() + halfFieldsize ) / terrain->mSquareSize );
+			int z = (int) floor( ( halfFieldsize - sphere->mPosition.z() ) / terrain->mSquareSize );
 
+#if 1
+			// Sphere to heightmap collision
 			// first member of the pair is the number of triangles we actually found
-			std::pair<int,Triangle*> trianglesToCheck = terrain->getNeighbourTriangles(x, z);
+			Triangle* neighboursTriangle = new Triangle[18];
+			std::pair<int,Triangle*> trianglesToCheck = terrain->getTrianglesAroundVertex(x, z, neighboursTriangle);
 
-			for(int c=0; c<trianglesToCheck.first; c++)
-				if ( Collisor::checkTriangleWithSphere(trianglesToCheck.second[c], sphere) )
+			for(int c=0; c<trianglesToCheck.first; c++)	{
+
+				//std::cout << "Checking for contact..." << std::endl;
+				//std::cout << "Sphere position  : [" << sphere->mPosition(0) << ", " << sphere->mPosition(1) << ", " << sphere->mPosition(2) << "]" << std::endl;
+				//std::cout << "Triangle vertex 1: [" << trianglesToCheck.second[c].mVertexes[0](0) << ", " << trianglesToCheck.second[c].mVertexes[0](1) << ", " << trianglesToCheck.second[c].mVertexes[0](2) << "]" << std::endl;
+				//std::cout << "Triangle vertex 2: [" << trianglesToCheck.second[c].mVertexes[1](0) << ", " << trianglesToCheck.second[c].mVertexes[1](1) << ", " << trianglesToCheck.second[c].mVertexes[1](2) << "]" << std::endl;
+				//std::cout << "Triangle vertex 3: [" << trianglesToCheck.second[c].mVertexes[2](0) << ", " << trianglesToCheck.second[c].mVertexes[2](1) << ", " << trianglesToCheck.second[c].mVertexes[2](2) << "]" << std::endl;
+				//system("cls");
+
+				if ( Collisor::checkTriangleWithSphere(trianglesToCheck.second[c], sphere, collision) ) {
 					// ASSUMPTION: terrain has infinite mass
 					// we compute forces for the sphere only
 					Collisor::resolveCollision( collision, iRigidBody_1, iRigidBody_2 );
+				}
+			}
 
-			// Simplified version: treats terrain as a stack of voxels
+			delete[] neighboursTriangle;
+#else
+			// Simplified version: treats terrain as a stack of voxels (ignores triangles tessellation)
 			real height = terrain->mVertexes(x,z);
 			if ( sphere->mPosition.y() - sphere->mRadius < height )
 			{
@@ -96,6 +111,7 @@ namespace PhysicsEngine
 				// we compute forces for the sphere only
 				Collisor::resolveCollision( collision, iRigidBody_1, iRigidBody_2 );
 			}
+#endif
 
 		}
 
@@ -117,7 +133,7 @@ namespace PhysicsEngine
 			vector3 distanceVector = sphere_1->mPosition - sphere_2->mPosition;
 			real distance = (distanceVector).norm();
 			vector3 distanceDirection = distanceVector / distance;
-			real penetration = sphere_1->mRadius + sphere_2->mRadius - distance;
+			real penetration = sphere_1->mRadius - sphere_2->mRadius - distance;
 			if ( penetration > 0 )
 			{
 				Collision collision = Collision (distanceVector, distanceDirection, penetration);
@@ -141,31 +157,61 @@ namespace PhysicsEngine
 			vector3 force(0,0,0);
 			vector3 relativeVelocity = iRigidBody_1->mVelocity - iRigidBody_2->mVelocity;
 
-			//real f = relativeVelocity.dot( iCollision.mContactNormal );
+			real f = relativeVelocity.dot( iCollision.mContactNormal );
 			//vector3 vTang = iCollision.mContactNormal * f;
-			//vTang = vrel_1_2 - vTang;
-			//f = K*d - L*f;
+			//vTang -= relativeVelocity;
 
-			real f = iRigidBody_1->mResistanceToDeformation * iCollision.mPenetration
-			         - iRigidBody_1->mElasticity * relativeVelocity.dot( iCollision.mContactNormal );
+			f = iRigidBody_1->mResistanceToDeformation * iCollision.mPenetration - iRigidBody_1->mElasticity * f;
 
 			if (f < 0)
 				f = 0;
 			
 			force = iCollision.mContactNormal * f;
 
-			//f *= M;
+			//f *= iRigidBody_1->mFriction;
 			//real ModVtang = vTang.norm();
 			//vTang *= -f;
-			//if(ModVtang < 9.8f * 0.02 ) vTang /= 9.8f * 0.02;
-			//else vTang /= ModVtang;
-			//Fout += vTang;
+
+			//if(ModVtang < 0.2 )
+			//	vTang /= 0.2;
+			//else
+			//	vTang /= ModVtang;
+
+			//force += vTang;
 			return force;
 		}
 
-		static bool Collisor::checkTriangleWithSphere( const Triangle& iTriangle, const Sphere* iSphere )
+		static bool Collisor::checkTriangleWithSphere( Triangle& iTriangle, Sphere* iSphere, Collision& iCollision )
 		{
-			
+			vector3 closestPointToSphere = Triangle::closestPointToPoint(iSphere->mPosition, iTriangle.mVertexes[0], iTriangle.mVertexes[1], iTriangle.mVertexes[2]);
+
+			// Sphere and triangle intersect if the distance from sphere
+			// center to point p is less than the sphere radius
+			vector3 triangleSphereVector = closestPointToSphere - iSphere->mPosition;
+			real triangleSphereDistance = triangleSphereVector.norm();
+
+			if ( triangleSphereDistance < iSphere->mRadius ) {
+
+				// update collision
+				iCollision.mContactNormal = Triangle::normal( iTriangle.mVertexes[1] - iTriangle.mVertexes[0], iTriangle.mVertexes[2] - iTriangle.mVertexes[1] );
+				iCollision.mContactPoint = closestPointToSphere;
+				iCollision.mPenetration = iSphere->mRadius - triangleSphereDistance;
+
+				//system("cls");
+				//std::cout << "Contact!" << std::endl;
+				//std::cout << "Sphere position  : [" << iSphere->mPosition(0) << ", " << iSphere->mPosition(1) << ", " << iSphere->mPosition(2) << "]" << std::endl;
+				//std::cout << "Triangle vertex 1: [" << iTriangle.mVertexes[0](0) << ", " << iTriangle.mVertexes[0](1) << ", " << iTriangle.mVertexes[0](2) << "]" << std::endl;
+				//std::cout << "Triangle vertex 2: [" << iTriangle.mVertexes[1](0) << ", " << iTriangle.mVertexes[1](1) << ", " << iTriangle.mVertexes[1](2) << "]" << std::endl;
+				//std::cout << "Triangle vertex 3: [" << iTriangle.mVertexes[2](0) << ", " << iTriangle.mVertexes[2](1) << ", " << iTriangle.mVertexes[2](2) << "]" << std::endl;
+				//std::cout << "Closest point to sphere: [" << iCollision.mContactPoint << "]" << std::endl;
+				//std::cout << "Contact normal: [" << iCollision.mContactNormal(0) << ", " << iCollision.mContactNormal(1) << ", " << iCollision.mContactNormal(2) << "]" << std::endl;
+				//std::cout << "Contact point:  [" << iCollision.mContactPoint(0) << ", " << iCollision.mContactPoint(1) << ", " << iCollision.mContactPoint(2) << "]" << std::endl;
+				//std::cout << "Penetration:    [" << iCollision.mPenetration << "]" << std::endl;
+
+				return true;
+			} else {
+				return false;
+			}
 		}
 
 	};
