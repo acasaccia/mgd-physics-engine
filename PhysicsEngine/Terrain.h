@@ -40,7 +40,7 @@ namespace PhysicsEngine
 		real* getVertexPosition(const int row, const int column, real* const iPosition) const;
 
 		//! Returns the 3D position of a heightmap point
-		Triangle* getSquareTesselation(const int row, const int column, Triangle* const tesselation) const;
+		Triangle* getSquareTessellation(const int row, const int column, Triangle* const tessellation) const;
 
 		//! Returns a pair: first element is the number of neighbour triangles (could vary on edges)
 		//! second element is an array of pointer to triangles

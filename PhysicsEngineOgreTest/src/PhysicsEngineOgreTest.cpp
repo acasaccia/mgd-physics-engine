@@ -204,6 +204,7 @@ void PhysicsEngineOgreTest::createOgreTerrain(Ogre::SceneManager* iSceneManager,
 	{
 		for (size_t c = 0; c < iTerrain->mSquaresNumber - 1; ++c)
 		{
+			iTerrain->getTessellationIndexes(r,c)
 			i = r * iTerrain->mSquaresNumber + c;
 			terrain->index(i);
 			i = (r+1) * iTerrain->mSquaresNumber + c;

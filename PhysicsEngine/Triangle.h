@@ -1,5 +1,5 @@
 /*! 
- *  Represents a 3D triangle, the basic tesselation unit of terrain rigid body
+ *  Represents a 3D triangle
  *  -
  *  Implementation of a simple physics engine, Physics Programming course
  *  Master in Computer Game Developement, Verona, Italy
